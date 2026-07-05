@@ -3,8 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, Request, HTTPException, status
 from fastapi.dependencies.utils import Annotated
 
-from Database import get_db
-from Models import User
+from App.src.Database import get_db
+from App.src.Models import User
 
 
 async def get_user(request:Request, db: Annotated[AsyncSession,Depends(get_db)]) -> User:

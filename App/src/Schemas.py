@@ -13,5 +13,4 @@ class InventoryScanItemSchema(BaseModel):
     item_amount: int
 
 class InventoryScanSchema(BaseModel):
-    position: PositionScanSchema
     items: List[InventoryScanItemSchema]

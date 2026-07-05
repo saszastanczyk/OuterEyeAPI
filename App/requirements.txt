@@ -1,7 +1,7 @@
 requests
 pydantic
 fastapi
-psycopg2
+asyncpg
 sqlalchemy
 contextlib3
 uvicorn

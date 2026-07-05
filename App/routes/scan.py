@@ -5,10 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter
 from fastapi import Depends, HTTPException
 
-from src.Database import get_db
-from src.Models import PositionScan, Position, InventoryScanItem, InventoryScan
-from src.Auth import CurrentUser
-from src.Schemas import PositionScanSchema, InventoryScanSchema
+from App.src.Database import get_db
+from App.src.Models import PositionScan, Position, InventoryScanItem, InventoryScan
+from App.src.Auth import CurrentUser
+from App.src.Schemas import PositionScanSchema, InventoryScanSchema
 
 router = APIRouter(prefix="/scan")
 

@@ -48,7 +48,6 @@ class Action(Base):
     death_action: Mapped["DeathAction"] = relationship(back_populates="action")
     pray_action: Mapped["PrayAction"] = relationship(back_populates="action")
 
-    inventory_scans:Mapped[List["InventoryScan"]] = relationship(back_populates="action")
 
 class MealAction(Base):
     __tablename__ = "meal_actions"
@@ -108,7 +107,7 @@ class PrayAction(Base):
     action:Mapped["Action"] = relationship(back_populates="pray_action")
 
 class InventoryScan(Base):
-    __tablename__ = "inventory_scan"
+    __tablename__ = "inventory_scans"
 
     inventory_scan_id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id",ondelete="CASCADE"),index=True)

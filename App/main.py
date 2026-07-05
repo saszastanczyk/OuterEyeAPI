@@ -2,7 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-from routes import scan
+from App.routes import scan
 
 
 
