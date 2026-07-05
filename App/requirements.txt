@@ -1,0 +1,7 @@
+requests
+pydantic
+fastapi
+psycopg2
+sqlalchemy
+contextlib3
+uvicorn
