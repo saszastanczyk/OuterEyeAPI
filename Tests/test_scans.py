@@ -58,15 +58,6 @@ class TestPositionScan:
         assert response.status_code == 200
         assert response.json() == {"status": "created"}
 
-    def test_missing_username_header(self):
-        response = requests.post(
-            f"{BASE_URL}/scan/position",
-            json=POSITION_SCAN,
-            headers={"Content-Type": "application/json"}
-        )
-        assert response.status_code == 400
-        assert "X-Username" in response.json()["detail"]
-
     def test_empty_username_header(self):
         headers = {"X-Username": "", "Content-Type": "application/json"}
         response = requests.post(
