@@ -1,4 +1,5 @@
 import logging
+import time
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -6,16 +7,16 @@ from fastapi import APIRouter
 from fastapi import Depends, HTTPException
 
 from App.src.Database import get_db
-from App.src.Models import Position, Action, MealAction, KillAction, BreedAction, DeathAction
+from App.src.Models import Position, Action, MealAction, KillAction, BreedAction, DeathAction,CraftAction
 from App.src.Auth import CurrentUser
 from App.src.Schemas import MealActionSchema, CraftActionSchema, KillActionSchema, BreedActionSchema, DeathActionSchema
-from src.Models import CraftAction
 
 router = APIRouter(prefix="/action")
 
 @router.post("/meal")
 async def add_meal( meal: MealActionSchema,user:CurrentUser,db:AsyncSession = Depends(get_db)):
     try:
+        start = time.time()
         position = Position(
             pos_x=meal.position.pos_x,
             pos_y=meal.position.pos_y,
@@ -34,6 +35,8 @@ async def add_meal( meal: MealActionSchema,user:CurrentUser,db:AsyncSession = De
 
         db.add(action)
         await db.commit()
+
+        print(f"Delay:{time.time() - start:.2f}")
         return {"status":"created"}
 
     except Exception as e:
@@ -67,7 +70,7 @@ async def add_craft( craft: CraftActionSchema,user:CurrentUser,db:AsyncSession =
 
     except Exception as e:
         await db.rollback()
-        logging.error(f"Error on handing meal action:{str(e)}")
+        logging.error(f"Error on handing craft action:{str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
@@ -98,7 +101,7 @@ async def add_kill(kill:KillActionSchema,user:CurrentUser,db:AsyncSession = Depe
 
     except Exception as e:
         await db.rollback()
-        logging.error(f"Error on handing meal action:{str(e)}")
+        logging.error(f"Error on handing kill action:{str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.post("/breed")
@@ -128,7 +131,7 @@ async def add_breed(breed:BreedActionSchema,user:CurrentUser,db:AsyncSession = D
 
     except Exception as e:
         await db.rollback()
-        logging.error(f"Error on handing meal action:{str(e)}")
+        logging.error(f"Error on handing breed action:{str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.post("/death")
@@ -156,5 +159,5 @@ async def add_death(death:DeathActionSchema,user:CurrentUser,db:AsyncSession = D
 
     except Exception as e:
         await db.rollback()
-        logging.error(f"Error on handing meal action:{str(e)}")
+        logging.error(f"Error on handing death action:{str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
