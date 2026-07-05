@@ -45,7 +45,7 @@ class Action(Base):
     craft_action: Mapped["CraftAction"] = relationship(back_populates="action")
     kill_action: Mapped["KillAction"] = relationship(back_populates="action")
     breed_action: Mapped["BreedAction"] = relationship(back_populates="action")
-    death_action: Mapped["DeathAction"] = relationship(back_populates="action")
+    death_action: Mapped["DeathAction"] =    relationship(back_populates="action")
     pray_action: Mapped["PrayAction"] = relationship(back_populates="action")
 
 

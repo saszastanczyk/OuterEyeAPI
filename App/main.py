@@ -2,7 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-from App.routes import scan
+from App.routes import scan,actions
 
 
 
@@ -17,6 +17,7 @@ async def lifespan(app:FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(scan.router)
+app.include_router(actions.router)
 
 
 
