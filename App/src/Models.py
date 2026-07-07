@@ -73,7 +73,8 @@ class KillAction(Base):
     kill_id: Mapped[int] = mapped_column(primary_key=True)
     action_id: Mapped[int] = mapped_column(ForeignKey("actions.action_id",ondelete="CASCADE"),index=True)
     killed_type: Mapped[str] = mapped_column(String(100))
-    killed_subject_id: Mapped[uuid.UUID]
+    killed_subject_id: Mapped[Optional[uuid.UUID]]
+    killed_name: Mapped[Optional[str]] = mapped_column(String(100))
     kill_tool: Mapped[str] = mapped_column(String(100))
 
     action:Mapped["Action"] = relationship(back_populates="kill_action")
@@ -85,6 +86,7 @@ class BreedAction(Base):
     father_subject_id: Mapped[uuid.UUID]
     mother_subject_id: Mapped[uuid.UUID]
     child_subject_id: Mapped[uuid.UUID]
+    child_type: Mapped[str] = mapped_column(String(30))
 
     action:Mapped["Action"] = relationship(back_populates="breed_action")
 

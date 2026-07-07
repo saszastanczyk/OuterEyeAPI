@@ -7,14 +7,17 @@ from fastapi import APIRouter
 from fastapi import Depends, HTTPException
 
 from App.src.Database import get_db
-from App.src.Models import Position, Action, MealAction, KillAction, BreedAction, DeathAction,CraftAction
+from App.src.Models import Position, Action, MealAction, KillAction, BreedAction, DeathAction, CraftAction, PrayAction
 from App.src.Auth import CurrentUser
-from App.src.Schemas import MealActionSchema, CraftActionSchema, KillActionSchema, BreedActionSchema, DeathActionSchema
+from App.src.OpenAI import get_pray_response
+
+from src.Schemas.Notifications import MealNotification,CraftNotification,KillNotification,BreedNotification,DeathNotification,PrayNotification
+from src.Schemas.UserData import PrayResponseRequest
 
 router = APIRouter(prefix="/action")
 
 @router.post("/meal")
-async def add_meal( meal: MealActionSchema,user:CurrentUser,db:AsyncSession = Depends(get_db)):
+async def add_meal( meal: MealNotification,user:CurrentUser,db:AsyncSession = Depends(get_db)):
     try:
         start = time.time()
         position = Position(
@@ -45,7 +48,7 @@ async def add_meal( meal: MealActionSchema,user:CurrentUser,db:AsyncSession = De
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.post("/craft")
-async def add_craft( craft: CraftActionSchema,user:CurrentUser,db:AsyncSession = Depends(get_db)):
+async def add_craft( craft: CraftNotification,user:CurrentUser,db:AsyncSession = Depends(get_db)):
     try:
         position = Position(
             pos_x=craft.position.pos_x,
@@ -75,7 +78,7 @@ async def add_craft( craft: CraftActionSchema,user:CurrentUser,db:AsyncSession =
 
 
 @router.post("/kill")
-async def add_kill(kill:KillActionSchema,user:CurrentUser,db:AsyncSession = Depends(get_db)):
+async def add_kill(kill:KillNotification,user:CurrentUser,db:AsyncSession = Depends(get_db)):
     try:
         position = Position(
             pos_x=kill.position.pos_x,
@@ -86,7 +89,8 @@ async def add_kill(kill:KillActionSchema,user:CurrentUser,db:AsyncSession = Depe
         kill_action = KillAction(
             killed_type= kill.kill_type,
             kill_tool=kill.kill_tool,
-            killed_subject_id=kill.kill_subject
+            killed_subject_id= kill.kill_subject,
+            killed_name= kill.kill_name
         )
 
         action = Action(
@@ -105,7 +109,7 @@ async def add_kill(kill:KillActionSchema,user:CurrentUser,db:AsyncSession = Depe
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.post("/breed")
-async def add_breed(breed:BreedActionSchema,user:CurrentUser,db:AsyncSession = Depends(get_db)):
+async def add_breed(breed:BreedNotification,user:CurrentUser,db:AsyncSession = Depends(get_db)):
     try:
         position = Position(
             pos_x=breed.position.pos_x,
@@ -117,6 +121,7 @@ async def add_breed(breed:BreedActionSchema,user:CurrentUser,db:AsyncSession = D
             father_subject_id=breed.father_subject_id,
             mother_subject_id=breed.mother_subject_id,
             child_subject_id=breed.child_subject_id,
+            child_type=breed.child_type
         )
 
         action = Action(
@@ -135,7 +140,7 @@ async def add_breed(breed:BreedActionSchema,user:CurrentUser,db:AsyncSession = D
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.post("/death")
-async def add_death(death:DeathActionSchema,user:CurrentUser,db:AsyncSession = Depends(get_db)):
+async def add_death(death:DeathNotification,user:CurrentUser,db:AsyncSession = Depends(get_db)):
     try:
         position = Position(
             pos_x=death.position.pos_x,
@@ -160,4 +165,42 @@ async def add_death(death:DeathActionSchema,user:CurrentUser,db:AsyncSession = D
     except Exception as e:
         await db.rollback()
         logging.error(f"Error on handing death action:{str(e)}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@router.post("/pray")
+async def add_pray(pray:PrayNotification,user:CurrentUser,db:AsyncSession = Depends(get_db)):
+    try:
+
+        position = Position(
+            pos_x=pray.position.pos_x,
+            pos_y=pray.position.pos_y,
+            pos_z=pray.position.pos_z
+        )
+
+        pray_request = PrayResponseRequest(
+            u= user.username,
+            t= pray.pray_text,
+            k= user.karma
+        )
+
+        pray_response = await get_pray_response(pray_request)
+
+        pray_action = PrayAction(
+            pray_text= pray.pray_text,
+            pray_respond=pray_response
+        )
+
+        action = Action(
+            user=user,
+            position=position,
+            pray_action=pray_action
+        )
+
+        db.add(action)
+        await db.commit()
+        return {"status": "created"}
+
+    except Exception as e:
+        await db.rollback()
+        logging.error(f"Error on handing pray action:{str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")

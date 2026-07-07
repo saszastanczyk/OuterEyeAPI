@@ -41,7 +41,8 @@ CREATE TABLE kill_actions(
     kill_id SERIAL PRIMARY KEY,
     action_id INTEGER REFERENCES actions(action_id) ON DELETE CASCADE NOT NULL,
     killed_type VARCHAR(100) NOT NULL,
-    killed_subject_id UUID NOT NULL,
+    killed_subject_id UUID,
+    killed_name VARCHAR(100),
     kill_TOOL VARCHAR(100)
 );
 
@@ -50,7 +51,8 @@ CREATE TABLE breed_actions(
     action_id INTEGER REFERENCES actions(action_id) ON DELETE CASCADE NOT NULL,
     father_subject_id UUID NOT NULL,
     mother_subject_id UUID NOT NULL,
-    child_subject_id UUID NOT NULL
+    child_subject_id UUID NOT NULL,
+    child_type VARCHAR(30) NOT NULL
 );
 
 CREATE TABLE death_actions(

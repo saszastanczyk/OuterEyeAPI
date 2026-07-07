@@ -8,12 +8,12 @@ from fastapi import Depends, HTTPException
 from App.src.Database import get_db
 from App.src.Models import PositionScan, Position, InventoryScanItem, InventoryScan
 from App.src.Auth import CurrentUser
-from App.src.Schemas import PositionScanSchema, InventoryScanSchema
+from src.Schemas.Notifications import PositionNotification,InventoryScanNotification
 
 router = APIRouter(prefix="/scan")
 
 @router.post("/position")
-async def add_position_scan(scan:PositionScanSchema ,user:CurrentUser,db:AsyncSession = Depends(get_db)):
+async def add_position_scan(scan:PositionNotification ,user:CurrentUser,db:AsyncSession = Depends(get_db)):
     try:
         position = Position(
             pos_x=scan.pos_x,
@@ -36,9 +36,9 @@ async def add_position_scan(scan:PositionScanSchema ,user:CurrentUser,db:AsyncSe
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.post("/inventory")
-async def add_inventory_scan(scan:InventoryScanSchema,user:CurrentUser,db:AsyncSession = Depends(get_db)):
+async def add_inventory_scan(scan:InventoryScanNotification,user:CurrentUser,db:AsyncSession = Depends(get_db)):
     try:
-        inventory_items = [InventoryScanItem(item_name=item.item_name,amount=item.item_amount) for item in scan.items]
+        inventory_items = [InventoryScanItem(item_name=item.name,amount=item.amount) for item in scan.items]
 
         inventory_scan = InventoryScan(
             user=user,

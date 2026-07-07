@@ -5,3 +5,4 @@ asyncpg
 sqlalchemy
 contextlib3
 uvicorn
+openai
