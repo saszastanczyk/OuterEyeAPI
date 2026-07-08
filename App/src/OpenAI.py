@@ -1,7 +1,7 @@
 import os
 
 from openai import AsyncOpenAI
-from App.src.Schemas.UserData import PrayResponseRequest
+from App.src.Schemas.Requests import PrayResponseRequest
 
 secret_key = os.environ.get("DEEPSEEK_SECRET_KEY")
 pray_prompt = os.environ.get("DEEPSEEK_PRAY_PROMPT")

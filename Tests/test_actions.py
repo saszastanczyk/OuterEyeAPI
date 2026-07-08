@@ -1,8 +1,10 @@
+import json
+
 import requests
 import uuid
 
 BASE_URL = "http://localhost:8088"
-HEADERS = {"X-Username": "Steve", "Content-Type": "application/json"}
+HEADERS = {"X-Username": "AllahPrimarchOfChaos", "Content-Type": "application/json"}
 
 # Тестовые данные
 POSITION = {
@@ -45,7 +47,7 @@ DEATH_DATA = {
 
 PRAY_DATA = {
     "position": POSITION,
-    "pray_text": "О Аллах, я очень хочу насвая, дай мне насвай, я убит горем после того, как потрахал барана и прыгнул со скалы. Я даже разбился насмерть и воскрес. Сжалься надо мной. Сам имам Коляка, которого все мусульмане почитают как святого сказал, что я глубоко несчастен."
+    "pray_text": "Мы уже высалидились на одну из планет Ультрамар и начали уничтожать всех кого видим, особенно фанатичных ультрамаринов и преверженцев ничтожному Империуму. Более того на планету также наподают некросы, но мы не будем им противиться. Мы соберем всех овец и свиней и отправимся на другую планету подальше отсюда. Аллаху Акбар"
 }
 
 
@@ -106,10 +108,28 @@ class TestDeathAction:
 
 class TestPrayAction:
     def test_add_pray_success(self):
-        response = requests.post(
+        response = requests.get(
             f"{BASE_URL}/action/pray",
             json=PRAY_DATA,
             headers=HEADERS
         )
+
+        # Выводим результат в консоль
+        print("\n" + "=" * 50)
+        print("📿 РЕЗУЛЬТАТ МОЛИТВЫ")
+        print("=" * 50)
+        print(f"📤 Отправлено: {json.dumps(PRAY_DATA, ensure_ascii=False, indent=2)}")
+        print(f"📥 Статус: {response.status_code}")
+
+        if response.status_code == 200:
+            response_data = response.json()
+            pray_response = response_data.get("pray_respond")
+            print(f"🙏 Ответ божества:\n{pray_response}")
+        else:
+            print(f"❌ Ошибка: {response.text}")
+        print("=" * 50 + "\n")
+
+        # Ассерты
         assert response.status_code == 200
-        assert response.json() == {"status": "created"}
+        assert "pray_respond" in response.json()
+        assert len(response.json()["pray_respond"]) > 0

@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi import APIRouter
 from fastapi import Depends, HTTPException
+from starlette.responses import JSONResponse
 
 from App.src.Database import get_db
 from App.src.Models import Position, Action, MealAction, KillAction, BreedAction, DeathAction, CraftAction, PrayAction
@@ -12,7 +13,7 @@ from App.src.Auth import CurrentUser
 from App.src.OpenAI import get_pray_response
 
 from src.Schemas.Notifications import MealNotification,CraftNotification,KillNotification,BreedNotification,DeathNotification,PrayNotification
-from src.Schemas.UserData import PrayResponseRequest
+from src.Schemas.Requests import PrayResponseRequest
 
 router = APIRouter(prefix="/action")
 
@@ -167,7 +168,7 @@ async def add_death(death:DeathNotification,user:CurrentUser,db:AsyncSession = D
         logging.error(f"Error on handing death action:{str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@router.post("/pray")
+@router.get("/pray")
 async def add_pray(pray:PrayNotification,user:CurrentUser,db:AsyncSession = Depends(get_db)):
     try:
 
@@ -198,7 +199,7 @@ async def add_pray(pray:PrayNotification,user:CurrentUser,db:AsyncSession = Depe
 
         db.add(action)
         await db.commit()
-        return {"status": "created"}
+        return JSONResponse(status_code=200, content={"pray_respond":pray_response})
 
     except Exception as e:
         await db.rollback()
