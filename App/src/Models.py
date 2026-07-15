@@ -2,7 +2,7 @@ import datetime
 import uuid
 from typing import Optional, List
 
-from sqlalchemy import String, ForeignKey
+from sqlalchemy import String, ForeignKey, func
 from sqlalchemy.orm import mapped_column, Mapped, DeclarativeBase, relationship
 
 
@@ -36,7 +36,7 @@ class Action(Base):
     action_id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id",ondelete="CASCADE"),index=True)
     position_id: Mapped[int] = mapped_column(ForeignKey("positions.position_id",ondelete="CASCADE"),index=True)
-    happen_time: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now(),index=True)
+    happen_time: Mapped[datetime.datetime] = mapped_column(default=func.now(),index=True)
 
     user: Mapped["User"] = relationship(back_populates="actions")
     position: Mapped["Position"] = relationship(Position, back_populates="action")
@@ -113,7 +113,7 @@ class InventoryScan(Base):
 
     inventory_scan_id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id",ondelete="CASCADE"),index=True)
-    time: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now(), index=True)
+    time: Mapped[datetime.datetime] = mapped_column(default=func.now(), index=True)
 
     user: Mapped["User"] = relationship(back_populates="inventory_scans")
 
@@ -135,7 +135,7 @@ class PositionScan(Base):
     position_scan_id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id",ondelete="CASCADE"),index=True)
     position_id: Mapped[int] = mapped_column(ForeignKey("positions.position_id",ondelete="CASCADE"),index=True)
-    scan_time: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now(), index=True)
+    scan_time: Mapped[datetime.datetime] = mapped_column(default=func.now(), index=True)
 
     user: Mapped["User"] = relationship(back_populates="positions_scans")
     position: Mapped["Position"] = relationship(back_populates="position_scan")

@@ -9,7 +9,7 @@ from App.routes import scan_notification,actions_notification,analysis_requests
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
-    logging.level = logging.INFO
+    logging.level = logging.DEBUG
     logging.info("Started lifespan")
     yield
     logging.info("Ended lifecycle")

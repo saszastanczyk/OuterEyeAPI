@@ -13,7 +13,6 @@ class MealData(ActionData):
     a: str = "meal"
     n: str
 
-
 class KillData(ActionData):
     a: str = "kill"
     k_type: str

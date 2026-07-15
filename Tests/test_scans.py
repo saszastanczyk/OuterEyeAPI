@@ -1,7 +1,7 @@
 import requests
 
 BASE_URL = "http://localhost:8088"
-HEADERS = {"X-Username": "Steve", "Content-Type": "application/json"}
+HEADERS = {"X-Username": "AllahPrimarchOfChaos", "Content-Type": "application/json"}
 
 # Тестовые данные
 POSITION_SCAN = {

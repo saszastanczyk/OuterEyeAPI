@@ -81,6 +81,10 @@ async def add_craft( craft: CraftNotification,user:CurrentUser,db:AsyncSession =
 @router.post("/kill")
 async def add_kill(kill:KillNotification,user:CurrentUser,db:AsyncSession = Depends(get_db)):
     try:
+
+
+
+
         position = Position(
             pos_x=kill.position.pos_x,
             pos_y=kill.position.pos_y,
@@ -168,7 +172,7 @@ async def add_death(death:DeathNotification,user:CurrentUser,db:AsyncSession = D
         logging.error(f"Error on handing death action:{str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@router.get("/pray")
+@router.post("/pray")
 async def add_pray(pray:PrayNotification,user:CurrentUser,db:AsyncSession = Depends(get_db)):
     try:
 
@@ -194,7 +198,7 @@ async def add_pray(pray:PrayNotification,user:CurrentUser,db:AsyncSession = Depe
         action = Action(
             user=user,
             position=position,
-            pray_action=pray_action
+            pray_action=pray_action 
         )
 
         db.add(action)
