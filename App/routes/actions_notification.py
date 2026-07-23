@@ -12,8 +12,8 @@ from App.src.Models import Position, Action, MealAction, KillAction, BreedAction
 from App.src.Auth import CurrentUser
 from App.src.OpenAI import get_pray_response
 
-from src.Schemas.Notifications import MealNotification,CraftNotification,KillNotification,BreedNotification,DeathNotification,PrayNotification
-from src.Schemas.Requests import PrayResponseRequest
+from App.src.Schemas.Notifications import MealNotification,CraftNotification,KillNotification,BreedNotification,DeathNotification,PrayNotification
+from App.src.Schemas.Requests import PrayResponseRequest
 
 router = APIRouter(prefix="/action")
 

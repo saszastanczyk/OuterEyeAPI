@@ -2,7 +2,7 @@ import os
 
 from openai import AsyncOpenAI
 from App.src.Schemas.Requests import PrayResponseRequest
-from src.Schemas.Requests import DataAnalysisRequest
+from src.Schemas.UserData import UserData
 
 secret_key = os.environ.get("DEEPSEEK_SECRET_KEY")
 pray_prompt = os.environ.get("DEEPSEEK_PRAY_PROMPT")
@@ -23,7 +23,7 @@ async def get_pray_response(request:PrayResponseRequest) -> str:
     )
     return response.choices[0].message.content
 
-async def get_analysis_response(data:DataAnalysisRequest) -> str:
+async def get_analysis_response(data:UserData) -> str:
     response = await client.chat.completions.create(
         model="deepseek-chat",
         messages=[

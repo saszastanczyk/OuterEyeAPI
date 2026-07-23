@@ -2,10 +2,10 @@ from typing import Sequence, List
 
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, joinedload
 
-from src.Models import User, InventoryScan, PositionScan, Action
-from src.Schemas.UserData import InventoryScanItemData, InventoryScanData, PositionScanData, MealData, BreedData, \
+from App.src.Models import User, InventoryScan, PositionScan, Action, KillAction, MealAction, BreedAction
+from App.src.Schemas.UserData import InventoryScanItemData, InventoryScanData, PositionScanData, MealData, BreedData, \
     KillData, CraftData, DeathData, PrayData, ActionData
 
 
@@ -46,13 +46,13 @@ class UserDataService:
     @staticmethod
     async def get_actions(user:User,limit:int,db:AsyncSession) -> List[ActionData]:
         actions_query = sa.select(Action).options(
-                selectinload(Action.meal_action),
-                selectinload(Action.kill_action),
-                selectinload(Action.breed_action),
-                selectinload(Action.craft_action),
-                selectinload(Action.death_action),
-                selectinload(Action.pray_action),
-                selectinload(Action.position),  # Загружаем сразу и позицию
+                joinedload(Action.meal_action),
+                joinedload(Action.kill_action),
+                joinedload(Action.breed_action),
+                joinedload(Action.craft_action),
+                joinedload(Action.death_action),
+                joinedload(Action.pray_action),
+                joinedload(Action.position),  # Загружаем сразу и позицию
             ).where(Action.user == user).limit(limit)
         actions_result = await db.execute(actions_query)
         actions_models: Sequence[Action] = actions_result.scalars().all()
@@ -86,23 +86,28 @@ class UserDataService:
                     h_t=happen_time
                 ))
             elif action.craft_action is not None:
-                actions.append(CraftData(
+                data = CraftData(
                     p=position,
                     n=action.craft_action.craft_subject,
                     am=action.craft_action.amount,
                     h_t=happen_time,
-                ))
+                )
+                actions.append(data)
+                print(data.model_dump_json())
             elif action.death_action is not None:
-                actions.append(DeathData(
+                data = DeathData(
                     p=position,
                     c=action.death_action.death_cause,
                     h_t=happen_time
-                ))
+                )
+                actions.append(data)
+                print(data.model_dump_json())
             elif action.pray_action is not None:
-                actions.append(PrayData(
+                data = PrayData(
                     p=position,
                     t=action.pray_action.pray_text,
                     r=action.pray_action.pray_respond,
                     h_t=happen_time
-                ))
+                )
+                actions.append(data)
         return actions
