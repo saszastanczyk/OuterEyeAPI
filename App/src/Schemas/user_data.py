@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 class ActionData(BaseModel):
     p: List[int]
-    h_t: int
+    h_d: int
 
 class MealData(ActionData):
     a: Literal["meal"] = "meal"
@@ -57,6 +57,8 @@ ActionList = Annotated[Union[PrayData,DeathData,CraftData,MealData,BreedData,Kil
 
 class UserData(BaseModel):
     u: str
+    time_origin: int
+    pos_origin: List[int]
     i_s: List[InventoryScanData]
     p_s: List[PositionScanData]
     a_l: List[ActionList]

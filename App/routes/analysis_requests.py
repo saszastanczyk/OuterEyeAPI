@@ -7,23 +7,27 @@ from fastapi import APIRouter
 from fastapi import Depends, HTTPException
 from starlette.responses import JSONResponse
 
-from App.src.Database import get_db
-from App.src.Auth import CurrentUser
-from App.src.OpenAI import get_analysis_response
-from App.src.Schemas.UserData import UserData
+from App.src.database import get_db
+from App.src.auth import CurrentUser
+from App.src.open_ai import get_analysis_response
+from App.src.Schemas.user_data import UserData
 
-from App.src.Services import UserDataService
+from App.src.services import UserDataService
 
 router = APIRouter(prefix="/analysis")
 
 @router.get("/scenario")
 async def get_response_scenario(user: CurrentUser,db: AsyncSession = Depends(get_db)):
     try:
+        origin_pos, origin_time = await UserDataService.get_origins(user, db,20)
+
         request = UserData(
             u=user.username,
-            i_s= await UserDataService.get_inventory_scans(user, 2, db),
-            p_s= await UserDataService.get_position_scans(user, 20, db),
-            a_l= await UserDataService.get_actions(user, 100, db)
+            time_origin=origin_time,
+            pos_origin=origin_pos,
+            i_s= await UserDataService.get_inventory_scans(user,origin_time, 2,db),
+            p_s= await UserDataService.get_position_scans(user,origin_time,origin_pos, 20, db),
+            a_l= await UserDataService.get_actions(user,origin_time,origin_pos, 100, db)
         )
 
         print(request.model_dump_json())

@@ -7,13 +7,13 @@ from fastapi import APIRouter
 from fastapi import Depends, HTTPException
 from starlette.responses import JSONResponse
 
-from App.src.Database import get_db
-from App.src.Models import Position, Action, MealAction, KillAction, BreedAction, DeathAction, CraftAction, PrayAction
-from App.src.Auth import CurrentUser
-from App.src.OpenAI import get_pray_response
+from App.src.database import get_db
+from App.src.models import Position, Action, MealAction, KillAction, BreedAction, DeathAction, CraftAction, PrayAction
+from App.src.auth import CurrentUser
+from App.src.open_ai import get_pray_response
 
-from App.src.Schemas.Notifications import MealNotification,CraftNotification,KillNotification,BreedNotification,DeathNotification,PrayNotification
-from App.src.Schemas.Requests import PrayResponseRequest
+from App.src.Schemas.notifications import MealNotification,CraftNotification,KillNotification,BreedNotification,DeathNotification,PrayNotification
+from App.src.Schemas.requests import PrayResponseRequest
 
 router = APIRouter(prefix="/action")
 
@@ -81,10 +81,6 @@ async def add_craft( craft: CraftNotification,user:CurrentUser,db:AsyncSession =
 @router.post("/kill")
 async def add_kill(kill:KillNotification,user:CurrentUser,db:AsyncSession = Depends(get_db)):
     try:
-
-
-
-
         position = Position(
             pos_x=kill.position.pos_x,
             pos_y=kill.position.pos_y,
@@ -171,6 +167,8 @@ async def add_death(death:DeathNotification,user:CurrentUser,db:AsyncSession = D
         await db.rollback()
         logging.error(f"Error on handing death action:{str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
 
 @router.post("/pray")
 async def add_pray(pray:PrayNotification,user:CurrentUser,db:AsyncSession = Depends(get_db)):
