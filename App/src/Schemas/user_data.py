@@ -51,14 +51,13 @@ class InventoryScanItemData(BaseModel):
 class InventoryScanData(BaseModel):
     i_l: List[InventoryScanItemData]
     s_t: int
-
+    
 
 ActionList = Annotated[Union[PrayData,DeathData,CraftData,MealData,BreedData,KillData],Field(discriminator="a")]
 
 class UserData(BaseModel):
     u: str
     time_origin: int
-    pos_origin: List[int]
     i_s: List[InventoryScanData]
     p_s: List[PositionScanData]
     a_l: List[ActionList]

@@ -17,6 +17,7 @@ class ItemData(BaseModel):
     t: str #item type
     d: Optional[str] #item description
     e: Optional[List[EnhancementData]] #list of enhancements
+    a: int #amount
 
 class EntityData(BaseModel):
     t:str #entity type
@@ -26,7 +27,7 @@ class EntityData(BaseModel):
     a: int #amount of entities to summon
 
 class AIResponse(BaseModel):
-    b: Optional[List[Dict[str,List[int]]]] #list of blocks to place (dict of block type as key and list of positions where blocks og this type should be pasted)
+    b: Optional[Dict[str,List[int]]] #list of blocks to place (dict of block type as key and list of positions where blocks og this type should be pasted)
     e: Optional[List[EntityData]] #list of entities to summon
     i: Optional[List[ItemData]] #list of items to give to a player
     t: Optional[List[int]] #position a player should be teleported to
@@ -34,4 +35,4 @@ class AIResponse(BaseModel):
     h: HeaderData #data of message which plugin shows on performing god's will
 
 if __name__ == '__main__':
-    print(AIResponse.model_json_schema())
+        print(AIResponse.model_json_schema())

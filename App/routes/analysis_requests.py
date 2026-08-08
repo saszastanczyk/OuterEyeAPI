@@ -24,16 +24,13 @@ async def get_response_scenario(user: CurrentUser,db: AsyncSession = Depends(get
         request = UserData(
             u=user.username,
             time_origin=origin_time,
-            pos_origin=origin_pos,
             i_s= await UserDataService.get_inventory_scans(user,origin_time, 2,db),
-            p_s= await UserDataService.get_position_scans(user,origin_time,origin_pos, 20, db),
-            a_l= await UserDataService.get_actions(user,origin_time,origin_pos, 100, db)
+            p_s= await UserDataService.get_position_scans(user,origin_time, 50, db),
+            a_l= await UserDataService.get_actions(user,origin_time,100, db)
         )
 
         print(request.model_dump_json())
         response = await get_analysis_response(request)
-
-        print(response)
 
         return JSONResponse(status_code=200, content={"analysis_respond":response})
 

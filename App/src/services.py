@@ -49,7 +49,7 @@ class UserDataService:
         return inventory_scans
 
     @staticmethod
-    async def get_position_scans(user:User,time_origin:int,pos_origin:List[int],limit:int,db:AsyncSession) -> List[PositionScanData]:
+    async def get_position_scans(user:User,time_origin:int,limit:int,db:AsyncSession) -> List[PositionScanData]:
         position_scans_query = sa.select(PositionScan).order_by(desc(PositionScan.scan_time)).options(selectinload(PositionScan.position)).where(PositionScan.user == user).order_by(PositionScan.scan_time.desc()).limit(limit)
         positions_scan_result = await db.execute(position_scans_query)
         position_scans_models: Sequence[PositionScan] = positions_scan_result.scalars().all()
@@ -58,12 +58,12 @@ class UserDataService:
 
         for position in position_scans_models:
             position_scans.append(PositionScanData(s_t=int(position.scan_time.timestamp() - time_origin),
-                                                   p=[position.position.pos_x - pos_origin[0], position.position.pos_y - pos_origin[1],
-                                                      position.position.pos_z - pos_origin[2]] ))
+                                                   p=[position.position.pos_x, position.position.pos_y,
+                                                      position.position.pos_z] ))
         return position_scans
 
     @staticmethod
-    async def get_actions(user:User,time_origin:int,pos_origin:List[int],limit:int,db:AsyncSession) -> List[ActionData]:
+    async def get_actions(user:User,time_origin:int,limit:int,db:AsyncSession) -> List[ActionData]:
         actions_query = sa.select(Action).order_by(desc(Action.happen_time)).options(
                 joinedload(Action.meal_action),
                 joinedload(Action.kill_action),
@@ -78,7 +78,7 @@ class UserDataService:
 
         actions = []
         for action in actions_models:
-            position = [ action.position.pos_x - pos_origin[0],action.position.pos_y - pos_origin[1],action.position.pos_z- pos_origin[2]]
+            position = [ action.position.pos_x,action.position.pos_y,action.position.pos_z]
             happen_time = int(action.happen_time.timestamp()) - time_origin
             if action.meal_action is not None:
                 actions.append(MealData(
