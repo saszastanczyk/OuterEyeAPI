@@ -2,15 +2,11 @@ import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-from App.routes import scan_notification,actions_notification,analysis_requests
-
-
-
+from app.routes import scan_notification,actions_notification,analysis_requests
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
-    logging.level = logging.DEBUG
-    logging.info("Started lifespan")
+    logging.info("Started lifecycle")
     yield
     logging.info("Ended lifecycle")
 

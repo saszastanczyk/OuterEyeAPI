@@ -1,3 +1,3 @@
 # OuterEye plugin API
 
-API, с которым по REST общается OuterEye Plugin на Paper 
+API for analysing minecraft player's actions

@@ -12,9 +12,9 @@ class Base(DeclarativeBase):
 class User(Base):
     __tablename__ = "users"
     user_id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(String(100))
+    username: Mapped[str] = mapped_column(String(100),unique=True)
     karma: Mapped[int] = mapped_column(default=20)
-    register_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now())
+    register_date: Mapped[datetime.datetime] = mapped_column(default=func.now())
 
     actions:Mapped[List["Action"]] = relationship(back_populates="user")
     positions_scans: Mapped[ List["PositionScan"]] = relationship(back_populates="user")

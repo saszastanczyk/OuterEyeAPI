@@ -4,7 +4,7 @@ CREATE DATABASE outer_eye_db;
 
 CREATE TABLE users(
     user_id SERIAL PRIMARY KEY ,
-    username VARCHAR(100) NOT NULL,
+    username VARCHAR(100) UNIQUE NOT NULL,
     karma INTEGER DEFAULT 20,
     register_date DATE DEFAULT NOW()
 );

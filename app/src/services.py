@@ -1,12 +1,13 @@
 from typing import Sequence, List, Tuple
 
 import sqlalchemy as sa
+from conan.internal.util.dates import timestamp_now
 from sqlalchemy import desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload, joinedload
 
-from App.src.models import User, InventoryScan, PositionScan, Action, KillAction, MealAction, BreedAction
-from App.src.Schemas.user_data import InventoryScanItemData, InventoryScanData, PositionScanData, MealData, BreedData, \
+from app.src.models import User, InventoryScan, PositionScan, Action, KillAction, MealAction, BreedAction
+from app.src.Schemas.user_data import InventoryScanItemData, InventoryScanData, PositionScanData, MealData, BreedData, \
     KillData, CraftData, DeathData, PrayData, ActionData
 
 
@@ -15,7 +16,7 @@ class UserDataService:
     @staticmethod
     async def get_origins(user:User,db:AsyncSession,position_in_a_list:int = 10) -> Tuple[List[int],int]:
         """
-        Gets as time origin happen_date of one of positions_scans in database
+        Gets as time origin happen_date of one of positions_scans in database as tuple
 
         """
 
@@ -23,15 +24,22 @@ class UserDataService:
         result = await db.execute(query)
 
         scan_models: Sequence[PositionScan] = result.scalars().all()
-        scan_model = scan_models[-1]
+        if  len(scan_models) == 0:
+            scan_model = scan_models[-1]
 
-        position = scan_model.position
-        time = int(scan_model.scan_time.timestamp())
+            position = scan_model.position
+            time = int(scan_model.scan_time.timestamp())
 
-        return [position.pos_x, position.pos_y, position.pos_z], time
+            return [position.pos_x, position.pos_y, position.pos_z], time
+        else:
+            return [0,0,0], 0
 
     @staticmethod
     async def get_inventory_scans(user:User,time_origin:int, limit:int,db:AsyncSession) -> List[InventoryScanData]:
+        """
+        Gets recent inventory scans as list
+
+        """
         inventory_scans_query = sa.select(InventoryScan).order_by(desc(InventoryScan.time)).options(selectinload(InventoryScan.inventory_scan_items)).where(InventoryScan.user == user) .order_by(InventoryScan.time.desc()).limit(limit)
         inventory_scans_result = await db.execute(inventory_scans_query)
         inventory_scans_models: Sequence[InventoryScan] = inventory_scans_result.scalars().all()
@@ -50,6 +58,10 @@ class UserDataService:
 
     @staticmethod
     async def get_position_scans(user:User,time_origin:int,limit:int,db:AsyncSession) -> List[PositionScanData]:
+        """
+        Gets recent position scans as list
+
+        """
         position_scans_query = sa.select(PositionScan).order_by(desc(PositionScan.scan_time)).options(selectinload(PositionScan.position)).where(PositionScan.user == user).order_by(PositionScan.scan_time.desc()).limit(limit)
         positions_scan_result = await db.execute(position_scans_query)
         position_scans_models: Sequence[PositionScan] = positions_scan_result.scalars().all()
@@ -64,6 +76,10 @@ class UserDataService:
 
     @staticmethod
     async def get_actions(user:User,time_origin:int,limit:int,db:AsyncSession) -> List[ActionData]:
+        """
+        Gets list of recent actions(breed,kill,craft,death,pray)
+
+        """
         actions_query = sa.select(Action).order_by(desc(Action.happen_time)).options(
                 joinedload(Action.meal_action),
                 joinedload(Action.kill_action),

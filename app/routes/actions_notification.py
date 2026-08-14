@@ -7,13 +7,13 @@ from fastapi import APIRouter
 from fastapi import Depends, HTTPException
 from starlette.responses import JSONResponse
 
-from App.src.database import get_db
-from App.src.models import Position, Action, MealAction, KillAction, BreedAction, DeathAction, CraftAction, PrayAction
-from App.src.auth import CurrentUser
-from App.src.open_ai import get_pray_response
+from app.src.database import get_db
+from app.src.models import Position, Action, MealAction, KillAction, BreedAction, DeathAction, CraftAction, PrayAction
+from app.src.auth import CurrentUser
+from app.src.open_ai import get_pray_response
 
-from App.src.Schemas.notifications import MealNotification,CraftNotification,KillNotification,BreedNotification,DeathNotification,PrayNotification
-from App.src.Schemas.requests import PrayResponseRequest
+from app.src.Schemas.notifications import MealNotification,CraftNotification,KillNotification,BreedNotification,DeathNotification,PrayNotification
+from app.src.Schemas.requests import PrayResponseRequest
 
 router = APIRouter(prefix="/action")
 

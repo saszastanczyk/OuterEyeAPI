@@ -1,5 +1,4 @@
 import logging
-import traceback
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -7,12 +6,12 @@ from fastapi import APIRouter
 from fastapi import Depends, HTTPException
 from starlette.responses import JSONResponse
 
-from App.src.database import get_db
-from App.src.auth import CurrentUser
-from App.src.open_ai import get_analysis_response
-from App.src.Schemas.user_data import UserData
+from app.src.database import get_db
+from app.src.auth import CurrentUser
+from app.src.open_ai import get_analysis_response
+from app.src.Schemas.user_data import UserData
 
-from App.src.services import UserDataService
+from app.src.services import UserDataService
 
 router = APIRouter(prefix="/analysis")
 
@@ -32,11 +31,9 @@ async def get_response_scenario(user: CurrentUser,db: AsyncSession = Depends(get
         print(request.model_dump_json())
         response = await get_analysis_response(request)
 
-        return JSONResponse(status_code=200, content={"analysis_respond":response})
+        return JSONResponse(status_code=200, content={"analysis_respond":response.model_dump_json()})
 
 
     except Exception as ex:
-        logging.error(ex)
-        logging.error(str(ex.message))
-        logging.error(traceback.format_exc())
+        logging.error(f"Error on handing scenarios request:{str(ex)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
