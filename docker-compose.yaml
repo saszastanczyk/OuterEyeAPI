@@ -1,0 +1,56 @@
+services:
+  database:
+    image: "saszastanczyk/outer_eye:db_1.0"
+    container_name: "db"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_PASSWORD: #YOUR DB PASSWORD
+    networks:
+      - oe_net
+
+  outer_eye:
+    image: "saszastanczyk/outer_eye:api_1.0"
+    container_name: "oe"
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_HOST: database
+      DATABASE_PORT: 5432
+      DATABASE_NAME: outer_eye_db
+      DATABASE_PASSWORD: #YOUR DB PASSWORD
+      AI_ANALYSIS_PROMPT: #YOUR ANALYSIS PROMPT
+      AI_PRAY_PROMPT: #YOUR PRAY PROMPT
+      AI_SECRET_KEY: # YOUR AI KEY
+      AI_PRAY_TEMPERATURE: 0.5
+      AI_ANALYSIS_TEMPERATURE: 0.5
+      AI_URL: https://api.deepseek.com
+      AI_MODEL: deepseek-v4-pro
+    networks:
+      - oe_net
+
+  server:
+    image: "saszastanczyk/outer_eye:server_1.0"
+    container_name: "server"
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      API_URI_ANALYSIS: http://outer_eye:8088/analysis/
+      API_URI_ACTION: http://outer_eye:8088/action/
+      API_URI_SCAN: http://outer_eye:8088/scan/
+      POSITION_SCAN_GAP: 30
+      INVENTORY_SCAN_GAP: 120
+      ANALYSIS_GAP: 200
+    ports:
+      - "7777:7777"
+    networks:
+      - oe_net
+
+networks:
+  oe_net:
+    driver: bridge

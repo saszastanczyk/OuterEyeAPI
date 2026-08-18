@@ -1,0 +1,40 @@
+services:
+  database:
+    image: "saszastanczyk/outer_eye:db_1.0"
+    container_name: "db"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_PASSWORD: #YOUR DB PASSWORD
+    networks:
+      - oe_net
+
+  outer_eye:
+    image: "saszastanczyk/outer_eye:api_1.0"
+    container_name: "oe"
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_HOST: database
+      DATABASE_PORT: 5432
+      DATABASE_NAME: outer_eye_db
+      DATABASE_PASSWORD: #YOUR DB PASSWORD
+      AI_ANALYSIS_PROMPT: #YOUR ANALYSIS PROMPT
+      AI_PRAY_PROMPT: #YOUR PRAY PROMPT
+      AI_SECRET_KEY: # YOUR AI KEY
+      AI_PRAY_TEMPERATURE: 0.5
+      AI_ANALYSIS_TEMPERATURE: 0.5
+      AI_URL: https://api.deepseek.com
+      AI_MODEL: deepseek-v4-pro
+    ports:
+      - "8088:8088"
+    networks:
+      - oe_net
+
+networks:
+  oe_net:
+    driver: bridge

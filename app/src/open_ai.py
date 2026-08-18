@@ -1,9 +1,9 @@
 import os
 
 from openai import AsyncOpenAI
-from app.src.Schemas.requests import PrayResponseRequest
-from app.src.Schemas.user_data import UserData
-from app.src.Schemas.response_data import AIResponse
+from app.src.schemas.requests import PrayResponseRequest
+from app.src.schemas.user_data import UserData
+from app.src.schemas.response_data import AIResponse
 
 secret_key = os.environ.get("AI_SECRET_KEY")
 pray_prompt = os.environ.get("AI_PRAY_PROMPT")
@@ -11,7 +11,7 @@ analysis_prompt = os.environ.get("AI_ANALYSIS_PROMPT")
 pray_temperature = float(os.environ.get("AI_PRAY_TEMPERATURE",default="0.5"))
 analysis_temperature = float(os.environ.get("AI_ANALYSIS_TEMPERATURE",default="0.3"))
 ai_url = os.environ.get("AI_URL")
-
+ai_model = os.environ.get("AI_MODEL")
 
 client = AsyncOpenAI(
     api_key=secret_key,
@@ -23,7 +23,7 @@ async def get_pray_response(request:PrayResponseRequest) -> str:
 
     """
     response = await client.chat.completions.create(
-        model="deepseek-chat",
+        model=ai_model,
         messages=[
             {"role": "system", "content": pray_prompt},
             {"role": "user", "content": request.model_dump_json()}
@@ -38,7 +38,7 @@ async def get_analysis_response(data:UserData) -> AIResponse:
 
     """
     response = await client.chat.completions.create(
-        model="deepseek-chat",
+        model=ai_model,
         messages=[
             {"role": "system", "content": analysis_prompt},
             {"role": "system", "content": "Schema of your response:" + str(AIResponse.model_json_schema())},

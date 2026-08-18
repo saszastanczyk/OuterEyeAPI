@@ -9,7 +9,7 @@ from starlette.responses import JSONResponse
 from app.src.database import get_db
 from app.src.auth import CurrentUser
 from app.src.open_ai import get_analysis_response
-from app.src.Schemas.user_data import UserData
+from app.src.schemas.user_data import UserData
 
 from app.src.services import UserDataService
 
@@ -28,7 +28,6 @@ async def get_response_scenario(user: CurrentUser,db: AsyncSession = Depends(get
             a_l= await UserDataService.get_actions(user,origin_time,100, db)
         )
 
-        print(request.model_dump_json())
         response = await get_analysis_response(request)
 
         return JSONResponse(status_code=200, content={"analysis_respond":response.model_dump_json()})

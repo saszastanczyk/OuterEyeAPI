@@ -1,8 +1,0 @@
-services:
-  database:
-    image: "oe_db"
-    container_name: "oe_db"
-    environment:
-      POSTGRES_PASSWORD: "12345"
-    ports:
-      - "3307:5432"

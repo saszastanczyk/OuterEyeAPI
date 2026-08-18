@@ -1,13 +1,12 @@
 from typing import Sequence, List, Tuple
 
 import sqlalchemy as sa
-from conan.internal.util.dates import timestamp_now
 from sqlalchemy import desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload, joinedload
 
 from app.src.models import User, InventoryScan, PositionScan, Action, KillAction, MealAction, BreedAction
-from app.src.Schemas.user_data import InventoryScanItemData, InventoryScanData, PositionScanData, MealData, BreedData, \
+from app.src.schemas.user_data import InventoryScanItemData, InventoryScanData, PositionScanData, MealData, BreedData, \
     KillData, CraftData, DeathData, PrayData, ActionData
 
 
@@ -128,7 +127,6 @@ class UserDataService:
                     h_d=happen_time,
                 )
                 actions.append(data)
-                print(data.model_dump_json())
             elif action.death_action is not None:
                 data = DeathData(
                     p=position,
@@ -136,7 +134,6 @@ class UserDataService:
                     h_d=happen_time
                 )
                 actions.append(data)
-                print(data.model_dump_json())
             elif action.pray_action is not None:
                 data = PrayData(
                     p=position,

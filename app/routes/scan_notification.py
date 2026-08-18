@@ -8,7 +8,7 @@ from fastapi import Depends, HTTPException
 from app.src.database import get_db
 from app.src.models import PositionScan, Position, InventoryScanItem, InventoryScan
 from app.src.auth import CurrentUser
-from app.src.Schemas.notifications import PositionNotification,InventoryScanNotification
+from app.src.schemas.notifications import PositionNotification,InventoryScanNotification
 
 router = APIRouter(prefix="/scan")
 

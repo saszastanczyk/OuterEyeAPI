@@ -1,5 +1,4 @@
 import logging
-import time
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,15 +11,14 @@ from app.src.models import Position, Action, MealAction, KillAction, BreedAction
 from app.src.auth import CurrentUser
 from app.src.open_ai import get_pray_response
 
-from app.src.Schemas.notifications import MealNotification,CraftNotification,KillNotification,BreedNotification,DeathNotification,PrayNotification
-from app.src.Schemas.requests import PrayResponseRequest
+from app.src.schemas.notifications import MealNotification,CraftNotification,KillNotification,BreedNotification,DeathNotification,PrayNotification
+from app.src.schemas.requests import PrayResponseRequest
 
 router = APIRouter(prefix="/action")
 
 @router.post("/meal")
 async def add_meal( meal: MealNotification,user:CurrentUser,db:AsyncSession = Depends(get_db)):
     try:
-        start = time.time()
         position = Position(
             pos_x=meal.position.pos_x,
             pos_y=meal.position.pos_y,
@@ -39,8 +37,6 @@ async def add_meal( meal: MealNotification,user:CurrentUser,db:AsyncSession = De
 
         db.add(action)
         await db.commit()
-
-        print(f"Delay:{time.time() - start:.2f}")
         return {"status":"created"}
 
     except Exception as e:
